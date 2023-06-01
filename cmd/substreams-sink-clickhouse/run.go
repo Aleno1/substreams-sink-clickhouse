@@ -13,8 +13,8 @@ import (
 	"github.com/streamingfast/cli/sflags"
 	"github.com/streamingfast/shutter"
 	sink "github.com/streamingfast/substreams-sink"
-	"https://github.com/Aleno1/substreams-sink-clickhouse/db"
-	"https://github.com/Aleno1/substreams-sink-clickhouse/sinker"
+	"github.com/Aleno1/substreams-sink-clickhouse/db"
+	"github.com/Aleno1/substreams-sink-clickhouse/sinker"
 	"go.uber.org/zap"
 )
 

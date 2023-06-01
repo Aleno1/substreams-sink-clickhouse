@@ -9,8 +9,8 @@ import (
 	"github.com/streamingfast/logging"
 	"github.com/streamingfast/shutter"
 	sink "github.com/streamingfast/substreams-sink"
-	"https://github.com/Aleno1/substreams-sink-clickhouse/db"
-	pbddatabase "https://github.com/Aleno1/substreams-sink-clickhouse/pb/substreams/sink/database/v1"
+	"github.com/Aleno1/substreams-sink-clickhouse/db"
+	pbddatabase "github.com/Aleno1/substreams-sink-clickhouse/pb/substreams/sink/database/v1"
 	pbsubstreamsrpc "github.com/streamingfast/substreams/pb/sf/substreams/rpc/v2"
 	"go.uber.org/zap"
 )
