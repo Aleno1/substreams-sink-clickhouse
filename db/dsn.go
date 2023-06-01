@@ -39,7 +39,7 @@ func parseDSN(dsn string) (*DSN, error) {
 
 	host := dsnURL.Hostname()
 
-	port := int64(5432)
+	port := int64(8123)
 	if strings.Contains(dsnURL.Host, ":") {
 		port, _ = strconv.ParseInt(dsnURL.Port(), 10, 32)
 	}
