@@ -1,0 +1,14 @@
+<clickhouse>
+    <users>
+      <dev-node>
+          <password>insecure-change-me-in-prod</password>
+          <profile>default</profile>
+          <access_management>1</access_management>
+          <networks>
+                <ip>::/0</ip>
+          </networks>
+          <quota>default</quota>
+      </dev-node>
+    </users>
+</clickhouse>
+

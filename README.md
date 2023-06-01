@@ -16,7 +16,7 @@ This is a command line tool to quickly sync a Substreams to a Clickhouse databas
 
     ```shell
     substreams-sink-clickhouse run \
-        "<clickhouse_dsn>" \
+        "clickhouse://dev-node:insecure-change-me-in-prod@localhost:8123" \
         "mainnet.eth.streamingfast.io:443" \
         https://github.com/streamingfast/substreams-eth-block-meta/releases/download/v0.4.1/substreams-eth-block-meta-v0.4.1.spkg \
         db_out

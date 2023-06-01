@@ -1,0 +1,7 @@
+<clickhouse>
+  <databases>
+    <dev-node>
+      <quota>default</quota>
+    </dev-node>
+  </databases>
+</clickhouse>
