@@ -37,7 +37,10 @@ By convention, we name the `map` module that emits [sf.substreams.sink.database.
 
 The connection string is provided using a simple string format respecting the URL specification. The DSN format is:
 
-`clickhouse://<user>:<password>@<host>:<port>/<dbname>[?<options>]`
+```
+    clickhouse://<user>:<password>@<host>:<port>/<dbname>[?<options>]
+```
+
 Where <options> is URL query parameters in <key>=<value> format, multiple options are separated by & signs. Supported options can be seen on libpq official documentation. The options <user>, <password>, <host>, <port> and <dbname> should not be passed in <options> as they are automatically extracted from the DSN URL.
 
 ### Improvements
