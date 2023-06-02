@@ -2,6 +2,10 @@
 
 This is a command line tool to quickly sync a Substreams to a Clickhouse database.
 
+## Project Status
+
+- :construction: Work in progress
+
 ### Quickstart
 
 1. Install `substreams-sink-clickhouse` by using the pre-built binary release [available in the releases page](https://github.com/Aleno1/substreams-sink-clickhouse/releases). Extract `substreams-sink-clickhouse` binary into a folder and ensure this folder is referenced globally via your `PATH` environment variable.
