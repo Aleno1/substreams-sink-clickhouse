@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/jimsmart/schema"
+	"github.com/mailru/go-clickhouse/v2"
 	"github.com/streamingfast/logging"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -45,13 +46,12 @@ func NewLoader(
 	if err != nil {
 		return nil, fmt.Errorf("parse dsn: %w", err)
 	}
+	clickhouse.NewConfig()
 
-	// FIXME: We disabled for now the connection to the database
-	var db *sql.DB
-	// db, err := sql.Open("postgres", dsn.connString())
-	// if err != nil {
-	// 	return nil, fmt.Errorf("open db connection: %w", err)
-	// }
+	db, err := sql.Open("chhttp", dsn.connString())
+	if err != nil {
+		return nil, fmt.Errorf("open db connection: %w", err)
+	}
 
 	logger.Debug("created new DB loader",
 		zap.Duration("flush_interval", flushInterval),

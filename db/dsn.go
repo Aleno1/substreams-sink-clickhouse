@@ -71,3 +71,14 @@ func parseDSN(dsn string) (*DSN, error) {
 
 	return d, nil
 }
+
+func (c *DSN) connString() string {
+	out := fmt.Sprintf("http://%s:%d/%s?user=%s", c.host, c.port, c.database, c.username)
+	if c.password != "" {
+		out = out + "&password=" + c.password
+	}
+	if len(c.options) != 0 {
+		out = out + "&" + strings.Join(c.options, "&")
+	}
+	return out
+}
