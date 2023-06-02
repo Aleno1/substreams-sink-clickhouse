@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/Aleno1/substreams-sink-clickhouse/db"
+	"github.com/Aleno1/substreams-sink-clickhouse/sinker"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/streamingfast/cli"
@@ -13,8 +15,6 @@ import (
 	"github.com/streamingfast/cli/sflags"
 	"github.com/streamingfast/shutter"
 	sink "github.com/streamingfast/substreams-sink"
-	"github.com/Aleno1/substreams-sink-clickhouse/db"
-	"github.com/Aleno1/substreams-sink-clickhouse/sinker"
 	"go.uber.org/zap"
 )
 
@@ -74,13 +74,15 @@ func sinkRunE(cmd *cobra.Command, args []string) error {
 			fmt.Printf("Error validating the cursors table: %s\n", e)
 			fmt.Println("You can use the following sql schema to create a cursors table")
 			fmt.Println(Dedent(`
-				create table cursors
+				CREATE TABLE IF NOT EXISTS cursors
 				(
-					id         bigserial not null constraint cursor_pk primary key,
-					cursors    text,
-					block_num  bigint,
-					block_id   text
-				);
+					id         String,
+					cursor     String,
+					block_num  Int64,
+					block_id   String,
+					PRIMARY KEY (id)
+				) ENGINE = MergeTree()
+				ORDER BY id;
 			`))
 			return fmt.Errorf("invalid cursors table")
 		}
