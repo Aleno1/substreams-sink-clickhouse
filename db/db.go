@@ -231,13 +231,15 @@ func (l *Loader) Setup(ctx context.Context, schemaFile string) error {
 
 func (l *Loader) setupCursorTable(ctx context.Context) error {
 	_, err := l.ExecContext(ctx, `
-		create table if not exists cursors
+		CREATE TABLE IF NOT EXISTS cursors
 		(
-			id         text not null constraint cursor_pk primary key,
-			cursor     text,
-			block_num  bigint,
-			block_id   text
-		);
+			id         String,
+			cursor     String,
+			block_num  Int64,
+			block_id   String,
+			PRIMARY KEY (id)
+		) ENGINE = MergeTree()
+		ORDER BY id;
 	`)
 
 	if err != nil {
