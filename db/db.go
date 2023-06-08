@@ -95,7 +95,7 @@ func (l *Loader) LoadTables() error {
 
 		columns, err := getColumnsTypesForTable(l.DB, tableName)
 		if err != nil {
-			return fmt.Errorf("getting column: %v", tableName, err)
+			return fmt.Errorf("getting columns for table %s: %v", tableName, err)
 		}
 
 		if tableName == "cursors" {
