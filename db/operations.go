@@ -96,7 +96,7 @@ func (o *Operation) query() (string, error) {
 			updates[i] = fmt.Sprintf("%s=%s", columns[i], values[i])
 		}
 
-		return fmt.Sprintf("UPDATE %s SET %s WHERE %s = %s",
+		return fmt.Sprintf("ALTER TABLE %s UPDATE %s WHERE %s = %s",
 			o.table.identifier,
 			strings.Join(updates, ", "),
 			o.table.primaryColumn.escapedName,

@@ -119,7 +119,7 @@ func (l *Loader) InsertCursor(ctx context.Context, moduleHash string, c *sink.Cu
 // ErrCursorNotFound. If the update was not successful on the database, returns an error.
 func (l *Loader) UpdateCursor(ctx context.Context, tx *sql.Tx, moduleHash string, c *sink.Cursor) error {
 	_, err := l.runModifiyQuery(ctx, tx, "update", query(`
-		UPDATE %s set cursor = '%s', block_num = %d, block_id = '%s' WHERE id = '%s';
+		ALTER TABLE %s UPDATE cursor = '%s', block_num = %d, block_id = '%s' WHERE id = '%s';
 	`, l.cursorTable.identifier, c, c.Block().Num(), c.Block().ID(), moduleHash))
 	return err
 }
