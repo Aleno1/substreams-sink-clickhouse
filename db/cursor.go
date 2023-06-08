@@ -118,7 +118,7 @@ func (l *Loader) InsertCursor(ctx context.Context, moduleHash string, c *sink.Cu
 // UpdateCursor updates the active cursor. If no cursor is active and no update occurred, returns
 // ErrCursorNotFound. If the update was not successful on the database, returns an error.
 func (l *Loader) UpdateCursor(ctx context.Context, tx *sql.Tx, moduleHash string, c *sink.Cursor) error {
-	_, err := l.runModifiyQuery(ctx, tx, "update", query(`
+	err := l.runModifiyQuery(ctx, tx, "update", query(`
 		ALTER TABLE %s UPDATE cursor = '%s', block_num = %d, block_id = '%s' WHERE id = '%s';
 	`, l.cursorTable.identifier, c, c.Block().Num(), c.Block().ID(), moduleHash))
 	return err
@@ -127,19 +127,19 @@ func (l *Loader) UpdateCursor(ctx context.Context, tx *sql.Tx, moduleHash string
 // DeleteCursor deletes the active cursor for the given 'moduleHash'. If no cursor is active and
 // no delete occurrred, returns ErrCursorNotFound. If the delete was not successful on the database, returns an error.
 func (l *Loader) DeleteCursor(ctx context.Context, moduleHash string) error {
-	_, err := l.runModifiyQuery(ctx, nil, "delete", fmt.Sprintf("DELETE FROM %s WHERE id = '%s'", l.cursorTable.identifier, moduleHash))
+	err := l.runModifiyQuery(ctx, nil, "delete", fmt.Sprintf("DELETE FROM %s WHERE id = '%s'", l.cursorTable.identifier, moduleHash))
 	return err
 }
 
 // DeleteAllCursors deletes the active cursor for the given 'moduleHash'. If no cursor is active and
 // no delete occurrred, returns ErrCursorNotFound. If the delete was not successful on the database, returns an error.
-func (l *Loader) DeleteAllCursors(ctx context.Context) (deletedCount int64, err error) {
-	deletedCount, err = l.runModifiyQuery(ctx, nil, "delete", fmt.Sprintf("DELETE FROM %s", l.cursorTable.identifier))
+func (l *Loader) DeleteAllCursors(ctx context.Context) (err error) {
+	err = l.runModifiyQuery(ctx, nil, "delete", fmt.Sprintf("DELETE FROM %s", l.cursorTable.identifier))
 	if err != nil && errors.Is(err, ErrCursorNotFound) {
-		return 0, nil
+		return nil
 	}
 
-	return deletedCount, nil
+	return nil
 }
 
 type sqlExecutor interface {
@@ -151,27 +151,18 @@ type sqlExecutor interface {
 //
 // If `tx` is nil, we use `l.DB` as the execution context, so an operations happening outside
 // a transaction. Otherwise, tx is the execution context.
-func (l *Loader) runModifiyQuery(ctx context.Context, tx *sql.Tx, action string, query string) (rowsAffected int64, err error) {
+func (l *Loader) runModifiyQuery(ctx context.Context, tx *sql.Tx, action string, query string) (err error) {
 	var executor sqlExecutor = l.DB
 	if tx != nil {
 		executor = tx
 	}
 
-	result, err := executor.ExecContext(ctx, query)
+	_, err = executor.ExecContext(ctx, query)
 	if err != nil {
-		return 0, fmt.Errorf("%s cursor: %w", action, err)
+		return fmt.Errorf("%s cursor: %w", action, err)
 	}
 
-	rowsAffected, err = result.RowsAffected()
-	if err != nil {
-		return 0, fmt.Errorf("rows affected: %w", err)
-	}
-
-	if rowsAffected <= 0 {
-		return 0, ErrCursorNotFound
-	}
-
-	return rowsAffected, nil
+	return nil
 }
 
 func query(in string, args ...any) string {
