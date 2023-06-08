@@ -47,6 +47,9 @@ func parseDSN(dsn string) (*DSN, error) {
 	username := dsnURL.User.Username()
 	password, _ := dsnURL.User.Password()
 	database := strings.TrimPrefix(dsnURL.EscapedPath(), "/")
+	if database == "" {
+		database = "default"
+	}
 
 	query := dsnURL.Query()
 	keys := make([]string, 0, len(query))
