@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jimsmart/schema"
 	"github.com/mailru/go-clickhouse/v2"
 	"github.com/streamingfast/logging"
 	"go.uber.org/zap"
@@ -52,7 +51,7 @@ func NewLoader(
 	if err != nil {
 		return nil, fmt.Errorf("open db connection: %w", err)
 	}
-
+	fmt.Print(dsn.database)
 	logger.Debug("created new DB loader",
 		zap.Duration("flush_interval", flushInterval),
 		zap.String("database", dsn.database),
@@ -82,25 +81,27 @@ func (l *Loader) FlushInterval() time.Duration {
 }
 
 func (l *Loader) LoadTables() error {
-	schemaTables, err := schema.Tables(l.DB)
+
+	tables, err := getTableNamesInDatabase(l.DB, l.GetDatabase())
 	if err != nil {
 		return fmt.Errorf("retrieving table and schema: %w", err)
 	}
-
+	fmt.Errorf("Trying to print stuff")
 	seenCursorTable := false
-	for schemaTableName, columns := range schemaTables {
-		schemaName := schemaTableName[0]
-		tableName := schemaTableName[1]
+	for _, tableName := range tables {
 		l.logger.Debug("processing schema's table",
-			zap.String("schema_name", schemaName),
 			zap.String("table_name", tableName),
 		)
+
+		columns, err := getColumnsTypesForTable(l.DB, tableName)
+		if err != nil {
+			return fmt.Errorf("getting column: %v", tableName, err)
+		}
 
 		if tableName == "cursors" {
 			if err := l.validateCursorTables(columns); err != nil {
 				return fmt.Errorf("invalid cursors table: %w", err)
 			}
-
 			seenCursorTable = true
 		}
 
@@ -114,7 +115,7 @@ func (l *Loader) LoadTables() error {
 			}
 		}
 
-		key, err := schema.PrimaryKey(l.DB, schemaName, tableName)
+		key, err := getPrimaryKeysForTable(l.DB, tableName)
 		if err != nil {
 			return fmt.Errorf("get primary key: %w", err)
 		}
@@ -124,7 +125,7 @@ func (l *Loader) LoadTables() error {
 			primaryKeyColumnName = key[0]
 		}
 
-		l.tables[tableName], err = NewTableInfo(schemaName, tableName, primaryKeyColumnName, columnByName)
+		l.tables[tableName], err = NewTableInfo(tableName, primaryKeyColumnName, columnByName)
 		if err != nil {
 			return fmt.Errorf("invalid table: %w", err)
 		}
@@ -165,7 +166,7 @@ func (l *Loader) validateCursorTables(columns []*sql.ColumnType) (err error) {
 			return &CursorError{fmt.Errorf("missing column %q from cursors", k)}
 		}
 	}
-	key, err := schema.PrimaryKey(l.DB, "public", "cursors")
+	key, err := getPrimaryKeysForTable(l.DB, "cursors")
 	if err != nil {
 		return &CursorError{fmt.Errorf("failed getting primary key: %w", err)}
 	}

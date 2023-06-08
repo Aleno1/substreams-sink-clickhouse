@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 	"reflect"
 	"regexp"
@@ -205,4 +206,72 @@ func escapeStringValue(valueToEscape string) string {
 	}
 
 	return `'` + valueToEscape + `'`
+}
+
+func getTableNamesInDatabase(db *sql.DB, databaseName string) ([]string, error) {
+	var tables []string
+	rows, err := db.Query("SELECT name FROM system.tables WHERE database = ?;", databaseName)
+	if err != nil {
+		return nil, fmt.Errorf("getting tables for '%s': %v", databaseName, err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err != nil {
+			return nil, fmt.Errorf("getting databases: %v", err)
+		}
+		tables = append(tables, name)
+		if rows.Err(); err != nil {
+			return nil, fmt.Errorf("getting databases: %v", err)
+		}
+
+	}
+	return tables, nil
+}
+
+func getColumnsTypesForTable(db *sql.DB, tableName string) ([]*sql.ColumnType, error) {
+	query_string := fmt.Sprintf("SELECT * FROM %s LIMIT 0;", tableName)
+	column_types_rows, err := db.Query(query_string)
+	if err != nil {
+		return nil, fmt.Errorf("querying columns for table '%s': %v", tableName, err)
+	}
+	defer column_types_rows.Close()
+
+	columns, err := column_types_rows.ColumnTypes()
+	if err != nil {
+		return nil, fmt.Errorf("converting types for table '%s': %v", tableName, err)
+	}
+
+	return columns, nil
+}
+
+func getPrimaryKeysForTable(db *sql.DB, tableName string) ([]string, error) {
+	query_string := `
+		SELECT
+			name
+		FROM
+			system.columns
+		WHERE
+			database = currentDatabase() AND
+			table = ? AND
+			is_in_primary_key
+		ORDER BY
+			position
+	`
+	primary_keys_rows, err := db.Query(query_string, tableName)
+	if err != nil {
+		return nil, fmt.Errorf("querying primary key for table '%s': %v", tableName, err)
+	}
+	defer primary_keys_rows.Close()
+
+	var keys []string
+	n := ""
+	for primary_keys_rows.Next() {
+		err = primary_keys_rows.Scan(&n)
+		if err != nil {
+			return nil, err
+		}
+		keys = append(keys, n)
+	}
+	return keys, nil
 }
