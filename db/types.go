@@ -17,8 +17,6 @@ import (
 type OnModuleHashMismatch uint
 
 type TableInfo struct {
-	schema        string
-	schemaEscaped string
 	name          string
 	nameEscaped   string
 	columnsByName map[string]*ColumnInfo
@@ -29,8 +27,7 @@ type TableInfo struct {
 	identifier string
 }
 
-func NewTableInfo(schema, name, primaryKeyColumnName string, columnsByName map[string]*ColumnInfo) (*TableInfo, error) {
-	schemaEscaped := escapeIdentifier(schema)
+func NewTableInfo(name, primaryKeyColumnName string, columnsByName map[string]*ColumnInfo) (*TableInfo, error) {
 	nameEscaped := escapeIdentifier(name)
 	primaryColumn, found := columnsByName[primaryKeyColumnName]
 	if !found {
@@ -38,11 +35,9 @@ func NewTableInfo(schema, name, primaryKeyColumnName string, columnsByName map[s
 	}
 
 	return &TableInfo{
-		schema:        schema,
-		schemaEscaped: schemaEscaped,
 		name:          name,
 		nameEscaped:   nameEscaped,
-		identifier:    schemaEscaped + "." + nameEscaped,
+		identifier:    nameEscaped,
 		primaryColumn: primaryColumn,
 		columnsByName: columnsByName,
 	}, nil
