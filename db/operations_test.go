@@ -22,7 +22,7 @@ func Test_prepareColValues(t *testing.T) {
 		{
 			"bool true",
 			args{
-				newTable(t, "schema", "name", "id", NewColumnInfo("col", "bool", true)),
+				newTable(t, "name", "id", NewColumnInfo("col", "bool", true)),
 				map[string]string{"col": "true"},
 			},
 			[]string{`"col"`},
@@ -40,14 +40,14 @@ func Test_prepareColValues(t *testing.T) {
 	}
 }
 
-func newTable(t *testing.T, schema, name, primaryColumn string, columnInfos ...*ColumnInfo) *TableInfo {
+func newTable(t *testing.T, name, primaryColumn string, columnInfos ...*ColumnInfo) *TableInfo {
 	columns := make(map[string]*ColumnInfo)
 	columns[primaryColumn] = NewColumnInfo(primaryColumn, "text", "")
 	for _, columnInfo := range columnInfos {
 		columns[columnInfo.name] = columnInfo
 	}
 
-	table, err := NewTableInfo("public", "data", "id", columns)
+	table, err := NewTableInfo("data", "id", columns)
 	require.NoError(t, err)
 
 	return table
