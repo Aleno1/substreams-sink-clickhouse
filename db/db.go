@@ -51,7 +51,6 @@ func NewLoader(
 	if err != nil {
 		return nil, fmt.Errorf("open db connection: %w", err)
 	}
-	fmt.Print(dsn.database)
 	logger.Debug("created new DB loader",
 		zap.Duration("flush_interval", flushInterval),
 		zap.String("database", dsn.database),
