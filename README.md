@@ -2,19 +2,60 @@
 
 This is a command line tool to quickly sync a Substreams to a Clickhouse database.
 
-## Project Status
-
-- :construction: Work in progress
-
 ### Quickstart
 
 1. Install `substreams-sink-clickhouse` by using the pre-built binary release [available in the releases page](https://github.com/Aleno1/substreams-sink-clickhouse/releases). Extract `substreams-sink-clickhouse` binary into a folder and ensure this folder is referenced globally via your `PATH` environment variable.
 
     > **Note** Or install from source directly `go install github.com/Aleno1/substreams-sink-clickhouse/cmd/substreams-sink-clickhouse@latest`.
 
-1. Have a `Clickhouse` instance ready somewhere (no instructions given for this yet)
+1. Start Docker Compose:
 
-1. Run the sink
+    ```bash
+    docker compose up
+    ```
+
+    > **Note** Feel free to skip this step if you already have a running Clickhouse instance accessible, don't forget to update the connection string in the command below.
+
+2. Setup Clickhouse
+
+    Connect to Clickhouse
+
+    ```bash
+    docker compose exec ch_server clickhouse-client -u dev-node --password insecure-change-me-in-prod -h localhost
+    ```
+
+    And create necessary tables to run the sink
+
+    ```sql
+        CREATE TABLE block_meta
+    (
+        id          String, 
+            PRIMARY KEY (id),
+        at          String,
+        number      Int32,
+        hash        String,
+        parent_hash String,
+        timestamp   String
+    )
+    ENGINE = MergeTree()
+    ORDER BY id;
+
+    CREATE TABLE IF NOT EXISTS cursors
+    (
+        id         String,
+        cursor     String,
+        block_num  Int64,
+        block_id   String,
+        PRIMARY KEY (id)
+    ) ENGINE = MergeTree()
+    ORDER BY id;
+    ```
+
+    > **Note** Each create table query must be run independently as clickhouse doesn't support multiple create table queries at once.
+
+3. Run the sink
+
+    Use the precompiled Ethereum Block Meta [substreams](https://github.com/streamingfast/substreams-eth-block-meta/releases/download/v0.4.1/substreams-eth-block-meta-v0.4.1.spkg)
 
     > **Note** To connect to Substreams you will need an authentication token, follow this [guide](https://substreams.streamingfast.io/reference-and-specs/authentication) to obtain one.
 
@@ -48,3 +89,5 @@ Where <options> is URL query parameters in <key>=<value> format, multiple option
 Current implementation of substreams-sink-clickhouse uses the http interface which has better language support than the native one. However, it is more limited than the native interface and worse performances.
 
 Reimplementing this sink using the native interface would improve performance.
+
+Use an in memory table for cursor table instead of writing it on disk. (Memory table have no primary keys)
