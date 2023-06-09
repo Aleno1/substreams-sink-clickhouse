@@ -1,7 +1,6 @@
 version: "3"
 #Source https://dev.to/titronium/clickhouse-server-in-1-minute-with-docker-4gf2
 
-# sudo docker-compose exec ch_server clickhouse-client
 services:
   ch_server:
     image: yandex/clickhouse-server
