@@ -30,17 +30,17 @@ This is a command line tool to quickly sync a Substreams to a Clickhouse databas
         CREATE TABLE block_meta
     (
         id          String, 
-            PRIMARY KEY (id),
         at          String,
         number      Int32,
         hash        String,
         parent_hash String,
-        timestamp   String
+        timestamp   String,
+        PRIMARY KEY (id),
     )
     ENGINE = MergeTree()
     ORDER BY id;
 
-    CREATE TABLE IF NOT EXISTS cursors
+    CREATE TABLE cursors
     (
         id         String,
         cursor     String,
@@ -91,3 +91,8 @@ Current implementation of substreams-sink-clickhouse uses the http interface whi
 Reimplementing this sink using the native interface would improve performance.
 
 Use an in memory table for cursor table instead of writing it on disk. (Memory table have no primary keys)
+
+
+
+
+bash ./substreams-sink-clickhouse run "clickhouse://dev-node:insecure-change-me-in-prod@localhost:8123" "mainnet.eth.streamingfast.io:443" https://github.com/streamingfast/substreams-eth-block-meta/releases/download/v0.4.1/substreams-eth-block-meta-v0.4.1.spkg db_out

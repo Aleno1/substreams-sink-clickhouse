@@ -74,7 +74,7 @@ func sinkRunE(cmd *cobra.Command, args []string) error {
 			fmt.Printf("Error validating the cursors table: %s\n", e)
 			fmt.Println("You can use the following sql schema to create a cursors table")
 			fmt.Println(Dedent(`
-				CREATE TABLE IF NOT EXISTS cursors
+				CREATE TABLE cursors
 				(
 					id         String,
 					cursor     String,
