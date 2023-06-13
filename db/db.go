@@ -85,7 +85,6 @@ func (l *Loader) LoadTables() error {
 	if err != nil {
 		return fmt.Errorf("retrieving table and schema: %w", err)
 	}
-	fmt.Errorf("Trying to print stuff")
 	seenCursorTable := false
 	for _, tableName := range tables {
 		l.logger.Debug("processing schema's table",
