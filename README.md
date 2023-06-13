@@ -91,8 +91,3 @@ Current implementation of substreams-sink-clickhouse uses the http interface whi
 Reimplementing this sink using the native interface would improve performance.
 
 Use an in memory table for cursor table instead of writing it on disk. (Memory table have no primary keys)
-
-
-
-
-bash ./substreams-sink-clickhouse run "clickhouse://dev-node:insecure-change-me-in-prod@localhost:8123" "mainnet.eth.streamingfast.io:443" https://github.com/streamingfast/substreams-eth-block-meta/releases/download/v0.4.1/substreams-eth-block-meta-v0.4.1.spkg db_out
