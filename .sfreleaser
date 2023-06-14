@@ -1,3 +1,5 @@
 global:
   language: golang
   variant: application
+release:
+  brew-disabled: true
