@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/aleno-ai/substreams-sink-clickhouse/db"
+	pbddatabase "github.com/aleno-ai/substreams-sink-clickhouse/pb/substreams/sink/database/v1"
 	"github.com/streamingfast/logging"
 	"github.com/streamingfast/shutter"
 	sink "github.com/streamingfast/substreams-sink"
-	"github.com/Aleno1/substreams-sink-clickhouse/db"
-	pbddatabase "github.com/Aleno1/substreams-sink-clickhouse/pb/substreams/sink/database/v1"
 	pbsubstreamsrpc "github.com/streamingfast/substreams/pb/sf/substreams/rpc/v2"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"

@@ -1,4 +1,4 @@
-module github.com/Aleno1/substreams-sink-clickhouse
+module github.com/aleno-ai/substreams-sink-clickhouse
 
 go 1.18
 
